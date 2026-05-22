@@ -106,6 +106,7 @@ src/
 └── init.sql    # Criação das tabelas e usuário admin padrão
 
 
+
 ## Como o fluxo MVC funciona
 
 Browser → .htaccess → public/index.php
