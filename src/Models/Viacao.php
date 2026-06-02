@@ -1,11 +1,10 @@
 <?php
 
 declare(strict_types=1);
-// O metodo estático fromRow() converte o array bruto do PDO nesse objeto,
-// fazendo as conversões de tipo necessárias (inteiro, bool, formatação de data).
+
 namespace App\Models;
 
-//Representa uma marca de viação carregada do banco. */
+/** Representa uma marca de viação carregada do banco. */
 final class Viacao
 {
     public function __construct(
@@ -16,16 +15,17 @@ final class Viacao
         public string $cidade,
         public bool $status,
         public ?string $data_criacao,
+        public ?string $data_exclusao,
     ) {
     }
 
-// @param array<string, mixed> $row */
+    /** @param array<string, mixed> $row */
     public static function fromRow(array $row): self
     {
         return new self(
             id: (int) $row['id'],
             nome: (string) $row['nome'],
-            logo: $row['logo'], // pode ser null direto
+            logo: $row['logo'],
             url: (string) $row['url'],
             cidade: (string) $row['cidade'],
             status: (int) $row['status'] === 1,
@@ -35,6 +35,11 @@ final class Viacao
                     ->setTimezone(new \DateTimeZone('America/Sao_Paulo'))
                     ->format('d/m/Y H:i:s')
                 : null,
-        );
+            data_exclusao: $row['data_exclusao'] !== null
+                    ? (new \DateTime($row['data_exclusao']))
+                        ->setTimezone(new \DateTimeZone('America/Sao_Paulo'))
+                        ->format('d/m/Y H:i:s')
+                    : null,
+            );
     }
 }

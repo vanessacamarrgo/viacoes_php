@@ -3,15 +3,14 @@
 declare(strict_types=1);
 
 /** @var list<string> $errors */
-/** @var array{nome: string, cidade: string, status: bool, url: string, logo: string} $old */
+/** @var array $old */
 
-$action  = "/viacoes";
-$method  = null;
-$viacao  = null;
-$old     = $old ?? [];
+$action = "/viacoes";
+$method = "POST";
+$old    = $old ?? [];
 ?>
 
-    <h1>Criar marca</h1>
+    <h1>Criar viação</h1>
 
 <?php if ($errors !== []): ?>
     <div class="alert alert--danger">

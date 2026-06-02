@@ -96,7 +96,6 @@ final class Router
             ], JSON_UNESCAPED_UNICODE);
             return;
         }
-
         echo 'Página não encontrada.';
     }
 

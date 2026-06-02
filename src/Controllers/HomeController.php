@@ -14,7 +14,6 @@ final class HomeController
 {
     private ViacaoService $viacoes;
 
-    // Injeção de dependência: aceita um ViacaoService ou cria um padrão
     public function __construct(?ViacaoService $viacoes = null)
     {
         $this->viacoes = $viacoes ?? new ViacaoService();

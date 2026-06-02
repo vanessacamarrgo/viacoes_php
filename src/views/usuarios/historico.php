@@ -8,20 +8,18 @@ use App\Models\Historico;
  * @var list<Historico> $historico
  * @var string $title
  * @var string $filtroUsuario
- * @var string $filtroViacao
+ * @var string $filtroAlvo
  * @var string $filtroAcao
  */
 
 $filtroUsuario = $filtroUsuario ?? '';
-$filtroViacao  = $filtroViacao  ?? '';
+$filtroAlvo    = $filtroAlvo    ?? '';
 $filtroAcao    = $filtroAcao    ?? '';
 
 $rotulos = [
-        'nome'   => 'Nome',
-        'url'    => 'Site',
-        'cidade' => 'Cidade',
-        'status' => 'Status',
-        'logo'   => 'Logo',
+    'nome'   => 'Nome',
+    'email'  => 'E-mail',
+    'status' => 'Status',
 ];
 
 $formatar = static function (string $campo, mixed $valor): string {
@@ -29,10 +27,13 @@ $formatar = static function (string $campo, mixed $valor): string {
         return '—';
     }
     if ($campo === 'status') {
-        return $valor ? 'Ativo' : 'Inativo';
-    }
-    if ($campo === 'logo') {
-        return $valor !== '' && $valor !== null ? '✔ ' . htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8') : '—';
+        if ($valor === true || $valor === 'ativo' || $valor === '1') {
+            return 'Ativo';
+        }
+        if ($valor === false || $valor === 'inativo' || $valor === '0') {
+            return 'Inativo';
+        }
+        return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
     }
     $str = (string) $valor;
     return $str !== '' ? htmlspecialchars($str, ENT_QUOTES, 'UTF-8') : '—';
@@ -40,43 +41,42 @@ $formatar = static function (string $campo, mixed $valor): string {
 
 $badgeAcao = static function (string $acao): string {
     $map = [
-            'criar'   => 'badge badge-active',
-            'editar'  => 'badge',
-            'deletar' => 'badge badge-inactive',
+        'criar'   => 'badge badge-active',
+        'editar'  => 'badge',
+        'deletar' => 'badge badge-inactive',
     ];
     $class = $map[$acao] ?? 'badge';
     return '<span class="' . $class . '">' . htmlspecialchars($acao, ENT_QUOTES, 'UTF-8') . '</span>';
 };
 
-$temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== '';
+$temFiltro = $filtroUsuario !== '' || $filtroAlvo !== '' || $filtroAcao !== '';
 
 ?>
 <link rel="stylesheet" href="/css/layout.css">
 <div class="container">
 
     <div class="page-header">
-        <h1>Histórico de edições</h1>
-        <a href="/viacoes" class="btn btn-ghost">← Voltar</a>
+        <h1>Histórico de usuários</h1>
+        <a href="/usuarios" class="btn btn-ghost">← Voltar</a>
     </div>
 
-    <!-- Filtros -->
-    <form method="get" action="/viacoes/historico" class="search-bar search-bar--multi">
+    <form method="get" action="/usuarios/historico" class="search-bar search-bar--multi">
         <div class="search-group search-group--multi">
             <input
-                    type="search"
-                    name="usuario"
-                    class="search-input"
-                    placeholder="Nome do usuário…"
-                    value="<?= htmlspecialchars($filtroUsuario, ENT_QUOTES, 'UTF-8') ?>"
-                    autocomplete="off"
+                type="search"
+                name="usuario"
+                class="search-input"
+                placeholder="Alterado por (Admin)…"
+                value="<?= htmlspecialchars($filtroUsuario, ENT_QUOTES, 'UTF-8') ?>"
+                autocomplete="off"
             >
             <input
-                    type="search"
-                    name="viacao"
-                    class="search-input"
-                    placeholder="Nome da viação…"
-                    value="<?= htmlspecialchars($filtroViacao, ENT_QUOTES, 'UTF-8') ?>"
-                    autocomplete="off"
+                type="search"
+                name="alvo"
+                class="search-input"
+                placeholder="Nome do usuário afetado…"
+                value="<?= htmlspecialchars($filtroAlvo, ENT_QUOTES, 'UTF-8') ?>"
+                autocomplete="off"
             >
             <select name="acao" class="search-select">
                 <option value="">Todas as ações</option>
@@ -86,7 +86,7 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
             </select>
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <?php if ($temFiltro): ?>
-                <a href="/viacoes/historico" class="btn btn-ghost">Limpar</a>
+                <a href="/usuarios/historico" class="btn btn-ghost">Limpar</a>
             <?php endif; ?>
         </div>
         <?php if ($temFiltro): ?>
@@ -94,8 +94,8 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
                 <?= count($historico) ?> registro(s) encontrado(s)
                 <?php
                 $partes = [];
-                if ($filtroUsuario !== '') $partes[] = 'usuário "<strong>' . htmlspecialchars($filtroUsuario, ENT_QUOTES, 'UTF-8') . '</strong>"';
-                if ($filtroViacao  !== '') $partes[] = 'viação "<strong>'  . htmlspecialchars($filtroViacao,  ENT_QUOTES, 'UTF-8') . '</strong>"';
+                if ($filtroUsuario !== '') $partes[] = 'autor "<strong>' . htmlspecialchars($filtroUsuario, ENT_QUOTES, 'UTF-8') . '</strong>"';
+                if ($filtroAlvo    !== '') $partes[] = 'alvo "<strong>'  . htmlspecialchars($filtroAlvo,    ENT_QUOTES, 'UTF-8') . '</strong>"';
                 if ($filtroAcao    !== '') $partes[] = 'ação "<strong>'    . htmlspecialchars($filtroAcao,    ENT_QUOTES, 'UTF-8') . '</strong>"';
                 echo 'para ' . implode(', ', $partes);
                 ?>
@@ -118,8 +118,8 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Usuário</th>
-                    <th>Viação ID</th>
+                    <th>Alterado por</th>
+                    <th>Usuário ID</th>
                     <th>Ação</th>
                     <th>Alterações</th>
                     <th>Data</th>
@@ -129,9 +129,8 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
                 <?php foreach ($historico as $h): ?>
 
                     <?php
-                    // extrai os snapshots do campo dados
-                    $antes  = $h->dados['antes']  ?? null;   // array ou null
-                    $depois = $h->dados['depois'] ?? null;   // array ou null
+                    $antes  = $h->dados['antes']  ?? null;
+                    $depois = $h->dados['depois'] ?? null;
 
                     $camposAlterados = [];
                     if ($antes !== null && $depois !== null) {
@@ -155,7 +154,7 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
                             <?php endif; ?>
                         </td>
 
-                        <td><?= (int) $h->viacao_id ?></td>
+                        <td><?= (int) $h->entidade_id ?></td>
 
                         <td><?= $badgeAcao($h->acao) ?></td>
 
@@ -213,7 +212,7 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
                                     </div>
                                     <?php if (count($camposAlterados) === 0): ?>
                                         <p class="mensagem">
-                                            Nenhum campo alterado (apenas logo ou ação sem mudança de texto).
+                                            Nenhum campo textual alterado (ex: atualização apenas de senha).
                                         </p>
                                     <?php endif; ?>
 
@@ -221,9 +220,9 @@ $temFiltro = $filtroUsuario !== '' || $filtroViacao !== '' || $filtroAcao !== ''
                                     <div class="diff-col unico">
                                         <pre class="json"><?=
                                             htmlspecialchars(
-                                                    json_encode($h->dados, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
-                                                    ENT_QUOTES,
-                                                    'UTF-8'
+                                                json_encode($h->dados, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
+                                                ENT_QUOTES,
+                                                'UTF-8'
                                             )
                                             ?></pre>
                                     </div>

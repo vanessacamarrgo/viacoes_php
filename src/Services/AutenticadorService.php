@@ -14,7 +14,7 @@ final class AutenticadorService
 
     public function login(string $email, string $senha): bool
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
+        $stmt = $this->pdo->prepare("SELECT * FROM viacoes.usuarios WHERE email = :email");
         $stmt->execute(['email' => $email]);
         $user = $stmt->fetch();
 

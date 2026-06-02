@@ -8,12 +8,12 @@ use App\Services\AutenticadorService;
 final class AutenticadorController
 {
     private AutenticadorService $autenticatorService;
-/*
+
     public function __construct(?AutenticadorService $autenticatorService = null)
     {
         $this->autenticatorService = $autenticatorService ?? new AutenticadorService(\getPdo());
     }
-*/
+
 
     public function login(): void
     {

@@ -39,6 +39,9 @@ function getPdo(): PDO
     ];
 
     $pdo = new PDO($dsn, $user, $pass, $options);
+    $pdo->exec("SET time_zone='-03:00'");
 
     return $pdo;
 }
+
+

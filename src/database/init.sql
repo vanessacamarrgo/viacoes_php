@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS usuarios
     status     TINYINT(1)   NOT NULL DEFAULT 1,
     data_criacao TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao TIMESTAMP    NULL     DEFAULT NULL
-        ON UPDATE CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    data_exclusao TIMESTAMP    NULL     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -28,7 +29,8 @@ CREATE TABLE IF NOT EXISTS viacoes
     status     TINYINT(1)   NOT NULL DEFAULT 1,
     data_criacao TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao TIMESTAMP    NULL     DEFAULT NULL
-        ON UPDATE CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    data_exclusao TIMESTAMP    NULL     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -107,3 +109,14 @@ VALUES
         'cb6a32d0830b4494359d747fe2469331.svg',
         1
     );
+
+CREATE TABLE IF NOT EXISTS historico_alteracoes (
+                                      id SERIAL PRIMARY KEY,
+                                      entidade_id INT NOT NULL,            -- ID do Usuário ou da Viação
+                                      entidade_tipo VARCHAR(50) NOT NULL,  -- 'Usuario' ou 'Viacao'
+                                      campo_alterado VARCHAR(100) NOT NULL,
+                                      valor_antigo TEXT,
+                                      valor_novo TEXT,
+                                      alterado_por INT,                    -- ID do usuário que fez a alteração
+                                      data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

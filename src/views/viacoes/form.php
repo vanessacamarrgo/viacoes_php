@@ -66,7 +66,6 @@
             >
             <p class="form-help-text">PNG, JPG ou SVG. A imagem será exibida em 160×60 px.</p>
         </div>
-
         <div class="form-group">
             <label>Status</label>
             <div class="radio-group">
@@ -75,7 +74,7 @@
                             type="radio"
                             name="status"
                             value="1"
-                            <?= !empty($old['status']) ? 'checked' : '' ?>
+                            <?= (isset($old['status']) && $old['status'] == '1') || (!isset($old['status']) && isset($viacao->status) && ($viacao->status == 1 || $viacao->status === true)) ? 'checked' : '' ?>
                     >
                     Ativo
                 </label>
@@ -85,7 +84,7 @@
                             type="radio"
                             name="status"
                             value="0"
-                            <?= empty($old['status']) ? 'checked' : '' ?>
+                            <?= (isset($old['status']) && $old['status'] == '0') || (!isset($old['status']) && isset($viacao->status) && ($viacao->status == 0 || $viacao->status === false)) ? 'checked' : '' ?>
                     >
                     Inativo
                 </label>
